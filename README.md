@@ -13,7 +13,7 @@ Tested on Racket 8.2 (CS), running on Ubuntu 20.04.
 The build step generates a custom racket base image via the `racket ctool`.
 The base image is then loaded into the main application via C-routines provided
 by the Racket interfacing library. This CMake configuration allows the base
-image to be loaded via "lazy" method at runtime, or via "immediate" method 
+image to be loaded via "lazy" method at runtime, or via "immediate" method
 at compile time. The default method is "lazy".
 
 You can choose which load method to use by specifying the CMake option
@@ -72,6 +72,28 @@ So at startup, all you need to run is something like this:
 The `export` commands need to be run only once per shell session.
 Instead of running each command separately, you can run `source test-vars.sh`
 once for the same effect.
+
+# Dependencies
+
+This setup was tested with Racket 8.2 (CS) on Ubuntu 20.04.
+The `racket` package should provide the required library
+(`libracketcs.a`) , header files and `raco ctool`[2].
+
+Successful build depends on these tools and libraries:
+
+- a recent C compiler toolchain (`GCC`, or `Clang`)
+- `CMake >= 3.16`
+- `pkg-config`
+- `zlib1g >= 1`
+- `liblz4 >= 1.9`
+- Basic threading support (`pthreads`?)
+
+More details about dependencies can be found
+in `rkt/CMakeLists.txt`.
+
+[2]: **NOTE**: The `raco` tool shipped with the Racket package must
+have a `ctool` subcommand available. It is required for the base image generation (see `Build` above).  Some platforms/packages may not provide it; for example on FreeBSD 12.2 the package
+`racket-minimal-8.2` does not provide `raco ctool`.
 
 # Features
 
