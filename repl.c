@@ -15,14 +15,36 @@ int main(int argc, char *argv[])
 {
     boot_custom_racket(argc, argv);
 
+    ptr apply = Sstring_to_symbol("apply");
+    ptr plus  = Sstring_to_symbol("+");
+    ptr range = Sstring_to_symbol("range");
+    ptr quote = Sstring_to_symbol("quote");
+    ptr hello_repl = Sstring_to_symbol("hello-repl");
+
+    {
+        int v = 100;
+        ptr e = Sfixnum(v);
+        e = Scons(range, Scons(e, Snil));
+        e = Scons(apply, Scons(plus, Scons(e, Snil)));
+
+        ptr ret = Scar(racket_eval(e));
+
+        if(Sfixnump(ret)){
+            fprintf(stderr, "eval '(apply + (range %d))' => %ld\n", v, Sfixnum_value(ret));
+        }
+        else {
+            fprintf(stderr, "eval '(apply + (range %d))' => ??? (not fixnum)\n", v);
+        }
+    }
+
     {
         // Runs a function 'hello-repl' defined in "rkt/run.rkt"
- 
+
         fprintf(stderr, "[Evaluating ((dynamic-require ''run 'hello-repl)) ]\n");
 
-        ptr rbase_sym = Scons(Sstring_to_symbol("quote"), Scons(Sstring_to_symbol("run"), Snil));
-        ptr repl_sym = Sstring_to_symbol("hello-repl");
-        racket_apply(Scar(racket_dynamic_require(rbase_sym, repl_sym)), Snil); 
+        ptr run = Sstring_to_symbol("run");
+        ptr rbase_sym = Scons(quote, Scons(run, Snil));
+        racket_apply(Scar(racket_dynamic_require(rbase_sym, hello_repl)), Snil);
 
     }
 
@@ -33,7 +55,7 @@ int main(int argc, char *argv[])
         ptr a = Sfixnum(4);
         ptr b = Sfixnum(5);
 
-        ptr rbase_sym = Scons(Sstring_to_symbol("quote"), Scons(Sstring_to_symbol("testi"), Snil));
+        ptr rbase_sym = Scons(quote, Scons(Sstring_to_symbol("testi"), Snil));
         ptr repl_sym = Sstring_to_symbol("pythagoras");
 
 
@@ -43,16 +65,16 @@ int main(int argc, char *argv[])
         }
 #endif
 
-        fprintf(stderr, "[Evaluating ((dynamic-require ''testi 'pythagoras) %ld %ld) ]\n", 
+        fprintf(stderr, "[Evaluating ((dynamic-require ''testi 'pythagoras) %ld %ld) ]\n",
                 Sfixnum_value(a), Sfixnum_value(b));
 
-        // For some reason the dynamic require returns a 'pair' with 
+        // For some reason the dynamic require returns a 'pair' with
         // only one element: the procedure. Scar reads that
         ptr proc_pair = racket_dynamic_require(rbase_sym, repl_sym);
 
         ptr pythagoras = Scar(proc_pair);
 
-        //assert(Sprocedurep(pythagoras));
+        assert(Sprocedurep(pythagoras));
 
 #ifdef REPL_DEBUG
         if(!Spairp(proc_pair)){
@@ -67,7 +89,7 @@ int main(int argc, char *argv[])
 
 
         // Result from the function call
-        ptr ret = Scall2(pythagoras, a, b); 
+        ptr ret = Scall2(pythagoras, a, b);
 
 
         // Must check the return value
@@ -87,8 +109,7 @@ int main(int argc, char *argv[])
         ptr rbase_sym = Sstring_to_symbol("racket/base");
         ptr repl_sym = Sstring_to_symbol("read-eval-print-loop");
 
-
-        racket_apply(Scar(racket_dynamic_require(rbase_sym, repl_sym)), Snil); 
+        racket_apply(Scar(racket_dynamic_require(rbase_sym, repl_sym)), Snil);
     }
 
     return 0;
