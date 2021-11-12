@@ -112,7 +112,7 @@ Here are some random "nice to have" ideas:
 
 Markus H (MawKKe)
 
-# LICENCE
+# License
 
 Copyright 2021 Markus Holmström (MawKKe)
 
