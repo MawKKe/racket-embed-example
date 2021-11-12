@@ -54,5 +54,5 @@ void boot_custom_racket(int argc, char *argv[]){
     racket_embedded_load_file(racket_base_bin, 1);
 #endif
 
-    racket_namespace_require(Sstring_to_symbol("racket/base"));
+    racket_namespace_require(Sstring_to_symbol("racket"));
 }
