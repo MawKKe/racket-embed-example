@@ -25,7 +25,7 @@ find_package(Threads REQUIRED)
 
 # Place library dependencies in variable for later use.
 # NOTE we could use ${CMAKE_DL_LIBS} in place of dl. But lets not.
-set(racket_embed_library_deps dl m racketcs pthread z lz4)
+set(racket_embed_library_deps racketcs dl m pthread z lz4)
 
 #-------------------------------------------------------------------------
 
