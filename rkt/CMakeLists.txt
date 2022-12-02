@@ -14,8 +14,9 @@ find_package(PkgConfig REQUIRED)
 
 # Racket 8.2 - These are the library dependency versions in Ubuntu 20.04.
 # Newer versions might work, I haven't tested.
-pkg_check_modules(LIBLZ4 liblz4>=1.9 REQUIRED)
-pkg_check_modules(LIBZ   zlib>=1     REQUIRED)
+pkg_check_modules(LZ4       liblz4>=1.9 REQUIRED IMPORTED_TARGET)
+pkg_check_modules(ZLIB      zlib>=1     REQUIRED IMPORTED_TARGET)
+pkg_check_modules(NCURSES   ncurses>=6  REQUIRED IMPORTED_TARGET)
 
 # racketcs depends on pthread, lets use this 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
@@ -25,7 +26,10 @@ find_package(Threads REQUIRED)
 
 # Place library dependencies in variable for later use.
 # NOTE we could use ${CMAKE_DL_LIBS} in place of dl. But lets not.
-set(racket_embed_library_deps racketcs dl m pthread z lz4)
+set(racket_embed_library_deps
+    racketcs dl m Threads::Threads
+    PkgConfig::LZ4 PkgConfig::ZLIB PkgConfig::NCURSES
+)
 
 #-------------------------------------------------------------------------
 
